@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mall-commerce-api-automation"
+version = "1.0.0"
+description = "API automation for the mall portal and admin commerce lifecycle"
+requires-python = ">=3.11"
+dependencies = [
+  "allure-pytest==2.15.2",
+  "PyMySQL==1.1.2",
+  "PyYAML==6.0.3",
+  "requests==2.32.4",
+]
+
+[project.optional-dependencies]
+dev = [
+  "locust==2.42.6",
+  "pytest==8.4.2",
+  "pytest-timeout==2.4.0",
+  "ruff==0.14.10",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra --strict-markers --timeout=30 --alluredir=reports/allure-results --clean-alluredir"
+markers = [
+  "smoke: critical authentication and availability checks",
+  "regression: regular functional regression",
+  "e2e: cross-portal and admin business workflow",
+  "negative: rejected or unauthorized business operation",
+  "slow: asynchronous workflow excluded from pull-request regression",
+  "known_issue: strict xfail linked to a documented mall defect",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.ruff.format]
+quote-style = "double"
+line-ending = "lf"

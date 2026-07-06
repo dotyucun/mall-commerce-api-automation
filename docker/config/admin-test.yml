@@ -1,0 +1,29 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://mysql:3306/mall?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
+    username: root
+    password: ${MALL_MYSQL_PASSWORD}
+  data:
+    redis:
+      host: redis
+      port: 6379
+      database: 0
+      timeout: 300ms
+
+minio:
+  endpoint: http://minio.invalid
+  bucketName: mall
+  accessKey: unused
+  secretKey: unused
+
+logging:
+  level:
+    root: info
+    com.macro.mall: info
+
+logstash:
+  host: localhost
+  enableInnerLog: false
