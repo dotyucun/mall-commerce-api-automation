@@ -1,0 +1,49 @@
+name: Locust Performance Baseline
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  MALL_ADMIN_PASSWORD: ${{ secrets.MALL_ADMIN_PASSWORD }}
+  MALL_TEST_USER_A_PASSWORD: ${{ secrets.MALL_TEST_USER_A_PASSWORD }}
+  MALL_TEST_USER_B_PASSWORD: ${{ secrets.MALL_TEST_USER_B_PASSWORD }}
+  MALL_MYSQL_PASSWORD: ${{ secrets.MALL_MYSQL_PASSWORD }}
+  MALL_RABBITMQ_PASSWORD: ${{ secrets.MALL_RABBITMQ_PASSWORD }}
+  MALL_SOURCE_DIR: ${{ github.workspace }}/.sut/mall
+  PYTHONUTF8: "1"
+
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+      - run: python -m pip install -r requirements.txt
+      - name: Build and start real mall services
+        shell: pwsh
+        run: ./scripts/mall-test.ps1 bootstrap
+      - name: Run 20-user read-heavy baseline
+        shell: pwsh
+        run: ./scripts/mall-test.ps1 performance
+      - name: Upload Locust report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: locust-performance-baseline
+          path: reports/locust
+          retention-days: 14
+      - name: Stop environment
+        if: always()
+        run: docker compose -f docker/compose.test.yml down --volumes --remove-orphans
