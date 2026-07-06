@@ -1,0 +1,116 @@
+name: mall-commerce-api-test
+
+services:
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MALL_MYSQL_PASSWORD:?MALL_MYSQL_PASSWORD is required}
+      MYSQL_DATABASE: mall
+      TZ: Asia/Shanghai
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "13307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ${MALL_SOURCE_DIR:?MALL_SOURCE_DIR is required}/document/sql/mall.sql:/docker-entrypoint-initdb.d/001_mall.sql:ro
+      - ./mysql/002_test_seed.sql:/docker-entrypoint-initdb.d/002_test_seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 3s
+      retries: 40
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  mongo:
+    image: mongo:5
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongo", "--quiet", "--eval", "db.runCommand({ ping: 1 }).ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  rabbitmq:
+    image: rabbitmq:3.10.5-management
+    environment:
+      RABBITMQ_DEFAULT_USER: mall
+      RABBITMQ_DEFAULT_PASS: ${MALL_RABBITMQ_PASSWORD:?MALL_RABBITMQ_PASSWORD is required}
+      RABBITMQ_DEFAULT_VHOST: /mall
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  mall-admin:
+    image: eclipse-temurin:17-jre
+    environment:
+      MALL_MYSQL_PASSWORD: ${MALL_MYSQL_PASSWORD}
+    command:
+      - java
+      - -jar
+      - /app/app.jar
+      - --spring.profiles.active=test
+      - --spring.config.additional-location=file:/app/application-test.yml
+    ports:
+      - "8080:8080"
+    volumes:
+      - ${MALL_SOURCE_DIR}/mall-admin/target/mall-admin-1.0-SNAPSHOT.jar:/app/app.jar:ro
+      - ./config/admin-test.yml:/app/application-test.yml:ro
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  mall-portal:
+    image: eclipse-temurin:17-jre
+    environment:
+      MALL_MYSQL_PASSWORD: ${MALL_MYSQL_PASSWORD}
+      MALL_RABBITMQ_PASSWORD: ${MALL_RABBITMQ_PASSWORD}
+    command:
+      - java
+      - -jar
+      - /app/app.jar
+      - --spring.profiles.active=test
+      - --spring.config.additional-location=file:/app/application-test.yml
+    ports:
+      - "8085:8085"
+    volumes:
+      - ${MALL_SOURCE_DIR}/mall-portal/target/mall-portal-1.0-SNAPSHOT.jar:/app/app.jar:ro
+      - ./config/portal-test.yml:/app/application-test.yml:ro
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+volumes:
+  mysql_data:
+  redis_data:
+  mongo_data:
+  rabbitmq_data:
