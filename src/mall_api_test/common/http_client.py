@@ -6,23 +6,10 @@ from urllib.parse import urljoin
 import allure
 import requests
 
+from mall_api_test.common.redaction import sanitize
 from mall_api_test.config.settings import SETTINGS
 
 LOGGER = logging.getLogger(__name__)
-SENSITIVE_KEYS = {"authorization", "password", "token", "accesstoken", "refreshtoken"}
-
-
-def _sanitize(value: Any) -> Any:
-    if isinstance(value, dict):
-        return {
-            key: "***" if key.lower() in SENSITIVE_KEYS else _sanitize(item)
-            for key, item in value.items()
-        }
-    if isinstance(value, list):
-        return [_sanitize(item) for item in value]
-    if isinstance(value, tuple):
-        return tuple(_sanitize(item) for item in value)
-    return value
 
 
 class HttpClient:
@@ -53,15 +40,17 @@ class HttpClient:
         try:
             body = response.json()
         except ValueError as exc:
-            self._attach_exchange(method, url, kwargs, response.status_code, response.text)
-            raise AssertionError(f"{self.name} response is not JSON: {response.text}") from exc
+            self._attach_exchange(method, url, kwargs, response.status_code, "<non-JSON body>")
+            raise AssertionError(f"{self.name} response is not JSON") from exc
 
         self._attach_exchange(method, url, kwargs, response.status_code, body)
         assert response.status_code == expected_http_status, (
             f"{self.name} HTTP status expected {expected_http_status}, "
-            f"got {response.status_code}: {body}"
+            f"got {response.status_code}: {sanitize(body)}"
         )
-        assert isinstance(body, dict), f"{self.name} response body is not an object: {body!r}"
+        assert isinstance(body, dict), (
+            f"{self.name} response body is not an object: {sanitize(body)!r}"
+        )
         return body
 
     def _attach_exchange(
@@ -76,11 +65,11 @@ class HttpClient:
             "request": {
                 "method": method.upper(),
                 "url": url,
-                "params": _sanitize(kwargs.get("params")),
-                "json": _sanitize(kwargs.get("json")),
-                "data": _sanitize(kwargs.get("data")),
+                "params": sanitize(kwargs.get("params")),
+                "json": sanitize(kwargs.get("json")),
+                "data": sanitize(kwargs.get("data")),
             },
-            "response": {"status_code": status_code, "body": _sanitize(body)},
+            "response": {"status_code": status_code, "body": sanitize(body)},
         }
         payload = json.dumps(exchange, ensure_ascii=False, indent=2, default=str)
         LOGGER.info("%s %s -> %s", method.upper(), url, status_code)

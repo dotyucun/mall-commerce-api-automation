@@ -3,9 +3,9 @@ INSERT INTO ums_member (
   create_time, gender, city, job, personalized_signature,
   integration, growth
 ) VALUES
-  (9001, 4, 'autotest_a', '$2a$10$NZ5o7r2E.ayT2ZoxgjlI.eJ6OEYqjH7INR/F.mXDbjZJi9HF0YCVG',
+  (9001, 4, 'autotest_a', 'INITIALIZED_BY_BOOTSTRAP',
    'autotest_a', '19900009001', 1, NOW(), 1, '深圳', 'QA', 'API automation user A', 5000, 1000),
-  (9002, 4, 'autotest_b', '$2a$10$NZ5o7r2E.ayT2ZoxgjlI.eJ6OEYqjH7INR/F.mXDbjZJi9HF0YCVG',
+  (9002, 4, 'autotest_b', 'INITIALIZED_BY_BOOTSTRAP',
    'autotest_b', '19900009002', 1, NOW(), 1, '深圳', 'QA', 'API automation user B', 5000, 1000)
 ON DUPLICATE KEY UPDATE
   password = VALUES(password), status = 1, integration = 5000, growth = 1000;

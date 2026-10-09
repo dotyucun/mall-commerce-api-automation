@@ -39,12 +39,17 @@ jobs:
         run: |
           ruff check .
           ruff format --check .
+          python -m pytest qa -o addopts= -q
           python -m pytest --collect-only -q
       - name: Build and start real mall services
         shell: pwsh
         run: ./scripts/mall-test.ps1 bootstrap
       - name: Run pull-request regression
+        if: github.event_name == 'pull_request'
         run: python -m pytest -m "not slow"
+      - name: Run complete regression on main or manual dispatch
+        if: github.event_name != 'pull_request'
+        run: python -m pytest
 
       - name: Generate Allure HTML
         if: always()

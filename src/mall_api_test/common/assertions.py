@@ -1,10 +1,12 @@
 from decimal import Decimal
 from typing import Any
 
+from mall_api_test.common.redaction import sanitize
+
 
 def assert_api_success(body: dict, expected_code: int = 200) -> None:
-    assert isinstance(body, dict), f"Response body is not an object: {body!r}"
-    assert body.get("code") == expected_code, f"API failed: {body}"
+    assert isinstance(body, dict), f"Response body is not an object: {sanitize(body)!r}"
+    assert body.get("code") == expected_code, f"API failed: {sanitize(body)}"
 
 
 def assert_business_error(
@@ -12,10 +14,12 @@ def assert_business_error(
     expected_code: int = 500,
     message_contains: str | None = None,
 ) -> None:
-    assert isinstance(body, dict), f"Response body is not an object: {body!r}"
-    assert body.get("code") == expected_code, f"Expected business error {expected_code}: {body}"
+    assert isinstance(body, dict), f"Response body is not an object: {sanitize(body)!r}"
+    assert body.get("code") == expected_code, (
+        f"Expected business error {expected_code}: {sanitize(body)}"
+    )
     if message_contains is not None:
-        assert message_contains in str(body.get("message", "")), body
+        assert message_contains in str(body.get("message", "")), sanitize(body)
 
 
 def get_data(body: dict) -> Any:

@@ -5,6 +5,7 @@ from mall_api_test.api.admin.admin_product_api import AdminProductApi
 from mall_api_test.api.portal.order_api import OrderApi
 from mall_api_test.api.portal.product_api import ProductApi
 from mall_api_test.common.assertions import assert_business_error, assert_decimal_equal
+from mall_api_test.common.known_defects import KnownDefectError
 from mall_api_test.workflows.cart_workflow import CartWorkflow
 from mall_api_test.workflows.order_workflow import OrderWorkflow
 
@@ -49,19 +50,32 @@ def test_admin_unpublish_removes_product_from_portal_search(
 @pytest.mark.xfail(
     reason="GH-5: 下架商品仍可通过旧购物车生成订单",
     strict=True,
+    raises=KnownDefectError,
 )
 @allure.feature("商品可售状态")
 def test_unpublished_product_cannot_be_ordered_from_stale_cart(
     portal_user_a,
     authorized_admin,
     settings,
+    order_repository,
+    product_repository,
     clean_test_data,
 ):
     cart_entry = CartWorkflow(portal_user_a, settings.fixture).add_fixture_item()
+    before_stock = product_repository.stock_snapshot(settings.fixture.sku_id)
     AdminProductApi(authorized_admin).set_publish_status([settings.fixture.product_id], 0)
 
     order_api = OrderApi(portal_user_a)
     confirm = order_api.generate_confirm_order([cart_entry["id"]])
     address = OrderWorkflow._choose_address(confirm["memberReceiveAddressList"])
     body = order_api.generate_order_raw([cart_entry["id"]], address["id"])
+    assert product_repository.get_product(settings.fixture.product_id)["publish_status"] == 0
+    if body["code"] == 200:
+        order_id = body["data"]["order"]["id"]
+        assert order_repository.get(order_id)["status"] == 0
+        after_stock = product_repository.stock_snapshot(settings.fixture.sku_id)
+        assert after_stock.stock == before_stock.stock
+        assert after_stock.lock_stock == before_stock.lock_stock + cart_entry["quantity"]
+        raise KnownDefectError("GH-5: unpublished product generated a persisted order")
     assert_business_error(body)
+    assert product_repository.stock_snapshot(settings.fixture.sku_id) == before_stock

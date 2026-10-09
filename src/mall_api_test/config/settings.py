@@ -1,5 +1,5 @@
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from mall_api_test.config.config_loader import load_config
 
@@ -18,21 +18,21 @@ class DatabaseSettings:
     host: str
     port: int
     username: str
-    password: str
+    password: str = field(repr=False)
     database: str
 
 
 @dataclass(frozen=True)
 class AccountSettings:
     username: str
-    password: str
+    password: str = field(repr=False)
 
 
 @dataclass(frozen=True)
 class RabbitMqSettings:
     management_url: str
     username: str
-    password: str
+    password: str = field(repr=False)
 
 
 @dataclass(frozen=True)

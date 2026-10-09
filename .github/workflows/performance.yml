@@ -36,12 +36,19 @@ jobs:
       - name: Run 20-user read-heavy baseline
         shell: pwsh
         run: ./scripts/mall-test.ps1 performance
+      - name: Capture container logs
+        if: always()
+        run: |
+          mkdir -p reports/logs
+          docker compose -f docker/compose.test.yml logs --no-color > reports/logs/compose.log
       - name: Upload Locust report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: locust-performance-baseline
-          path: reports/locust
+          path: |
+            reports/locust
+            reports/logs
           retention-days: 14
       - name: Stop environment
         if: always()
