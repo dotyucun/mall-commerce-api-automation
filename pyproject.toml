@@ -6,8 +6,9 @@ build-backend = "setuptools.build_meta"
 name = "mall-commerce-api-automation"
 version = "1.0.0"
 description = "API automation for the mall portal and admin commerce lifecycle"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
+  "bcrypt==4.3.0",
   "allure-pytest==2.15.2",
   "PyMySQL==1.1.2",
   "PyYAML==6.0.3",
@@ -24,6 +25,9 @@ dev = [
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+mall_api_test = ["config/*.yaml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

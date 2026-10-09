@@ -6,3 +6,4 @@ PyYAML==6.0.3
 pytest-timeout==2.4.0
 ruff==0.14.10
 locust==2.42.6
+bcrypt==4.3.0
