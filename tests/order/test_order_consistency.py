@@ -4,6 +4,8 @@ import pytest
 from mall_api_test.api.admin.admin_order_api import AdminOrderApi
 from mall_api_test.api.portal.cart_api import CartApi
 from mall_api_test.api.portal.order_api import OrderApi
+from mall_api_test.common.assertions import as_decimal, assert_decimal_equal
+from mall_api_test.common.known_defects import KnownDefectError
 from mall_api_test.common.order_assertions import (
     assert_order_amounts_match_items,
     assert_order_created,
@@ -30,6 +32,13 @@ def test_generated_order_matches_database_and_item_amounts(
     assert db_items[0]["product_id"] == context.product_id
     assert db_items[0]["product_sku_id"] == context.sku_id
     assert db_items[0]["product_quantity"] == context.quantity
+    assert_decimal_equal(db_items[0]["product_price"], context.cart_item["price"])
+    promotion_item = context.confirm["cartPromotionItemList"][0]
+    assert_decimal_equal(
+        db_items[0]["real_amount"],
+        as_decimal(promotion_item["price"]) - as_decimal(promotion_item["reduceAmount"]),
+    )
+    assert_decimal_equal(db_order["pay_amount"], context.confirm["calcAmount"]["payAmount"])
     assert CartApi(portal_user_a).list() == []
 
 
@@ -102,13 +111,22 @@ def test_order_lifecycle_updates_stock_logistics_and_history(
 
 
 @pytest.mark.regression
+@pytest.mark.known_issue
+@pytest.mark.xfail(
+    reason="GH-7: 后台关闭待付款订单未释放锁定库存",
+    strict=True,
+    raises=KnownDefectError,
+)
 @allure.feature("订单关闭")
 def test_admin_close_cancels_unpaid_order_and_records_history(
     order_workflow_a,
     order_repository,
     authorized_admin,
+    product_repository,
+    settings,
     clean_test_data,
 ):
+    before_stock = product_repository.stock_snapshot(settings.fixture.sku_id)
     context = order_workflow_a.create()
     AdminOrderApi(authorized_admin).close([context.order_id], "自动化关闭待付款订单")
 
@@ -119,3 +137,9 @@ def test_admin_close_cancels_unpaid_order_and_records_history(
         history["order_status"] == 4 and "自动化关闭待付款订单" in history["note"]
         for history in histories
     )
+    after_close = product_repository.stock_snapshot(context.sku_id)
+    assert after_close.stock == before_stock.stock
+    if after_close.lock_stock != before_stock.lock_stock:
+        assert after_close.lock_stock == before_stock.lock_stock + context.quantity
+        raise KnownDefectError("GH-7: admin close left the unpaid order's stock locked")
+    assert after_close == before_stock
