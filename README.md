@@ -1,35 +1,64 @@
-# mall-commerce-api-automation
+# 电商业务接口自动化测试
 
-基于真实开源电商系统 `macrozheng/mall` 的前后台接口自动化项目。项目固定被测源码 commit，通过 Docker Compose 启动完整依赖，使用 pytest 驱动前台会员、后台管理、MySQL 与 RabbitMQ 的跨端业务验证。
+基于 `macrozheng/mall` 的个人测试工程，使用 Python、pytest 和 Requests 验证商城前台与管理后台的业务流程。测试环境由 Docker Compose 启动，覆盖 MySQL、Redis、MongoDB、RabbitMQ 和两个商城服务，结果通过 Allure 报告和 GitHub Actions 保存。
 
-测试围绕商品可售状态、购物车规则、订单状态机、金额与库存一致性、用户数据隔离、退货闭环和异步超时取消组织；请求、工作流、数据库查询和测试数据治理分别封装。这是基于开源系统的个人测试工程，不是本人开发的电商系统，也不是企业生产环境测试经历。
+## 项目目标
 
-## 已验证状态
+订单接口返回成功后，金额、库存和订单状态是否一致？用户能否操作别人的订单？订单超时后，消息队列是否真正触发取消并释放锁定库存？这些是本项目重点验证的问题。
 
-| 项目 | 本地实测结果 |
-| --- | --- |
-| 被测版本 | `macrozheng/mall@0504e86b1f1b6f1b8aa6a734d37a90fb67346be7` |
-| 普通回归 | 默认顺序和逆序结果一致；`21 passed, 9 xfailed, 1 deselected` |
-| 完整回归 | `22 passed, 9 xfailed`，包含 RabbitMQ 慢场景 |
-| RabbitMQ 慢用例 | `1 passed, 30 deselected`，约 61 秒 |
-| 测试收集 | 31 个场景 |
-| 框架自测 | Windows `35 passed`；独立验证运行脚本、响应脱敏、数据写入边界、性能业务断言和严格 xfail |
-| Locust 基线 | 2026-10-09：20 用户、2 用户/秒、2 分钟；2190 请求、0 失败、聚合 P95 14ms，含业务响应校验 |
-| 静态检查 | Ruff check 与 format check 通过 |
+测试以“购物车 → 创建订单 → 支付 → 后台发货 → 确认收货 → 退货”为主线，同时覆盖非法状态流转、重复支付和双用户隔离。被测商城采用固定的开源版本，本仓库负责测试代码、环境配置、数据准备和验证报告。
 
-9 个预期失败实例对应 6 类已确认源码缺陷，不计入通过数量。原先 8 个实例之外，本轮补充库存断言发现后台关闭未释放锁定库存，并登记 GH-7。`strict=True` 配合专用异常类型，只接受已核实的缺陷表现；连接失败、准备数据失败或其他断言错误仍使回归失败。详见[已知缺陷](docs/known-issues.md)。
+## 实现思路
 
-## 覆盖范围
+| 要解决的问题 | 实现方式 | 代码与文档 |
+| --- | --- | --- |
+| 多个场景重复登录、下单、完成订单 | 分离接口对象与业务工作流，使用 Fixture 提供前后台客户端和依赖 | [订单工作流](src/mall_api_test/workflows/order_workflow.py)、[Fixture](tests/conftest.py) |
+| 接口返回正确，但数据库状态可能错误 | 同时断言响应、订单主表与明细、库存快照和操作历史 | [订单一致性测试](tests/order/test_order_consistency.py) |
+| 用例修改商品、订单和超时设置，影响后续执行 | 使用专用账号与商品，在用例前后清理记录、恢复库存；超时设置在 `finally` 中恢复 | [测试数据管理](src/mall_api_test/repositories/test_data_manager.py)、[异步测试](tests/async_workflows/test_order_timeout.py) |
+| 已知缺陷可能掩盖其他失败 | 使用 `xfail(strict=True, raises=KnownDefectError)`，只接受核实过的缺陷特征 | [越权测试](tests/order/test_order_ownership.py)、[框架自测](qa/test_known_defects.py) |
+| 异步取消无法在请求返回时立即判断 | 通过真实 RabbitMQ 延迟消息触发取消，轮询订单状态并核对库存恢复 | [超时取消测试](tests/async_workflows/test_order_timeout.py) |
+
+## 测试覆盖
 
 - 登录鉴权：前后台登录、错误凭据、Token 身份、未登录访问。
-- 商品与购物车：API/数据库一致性、上下架、重复添加、数量更新、库存边界、双用户隔离。
+- 商品与购物车：接口与数据库一致性、上下架、重复添加、数量更新、库存边界、双用户隔离。
 - 订单与金额：确认订单、主表与明细金额、商品快照、锁定库存、取消释放库存。
-- 跨端状态机：前台创建与支付、后台发货、前台确认收货、后台关闭、非法流转保护、操作历史。
-- 退货：完成订单申请退货、后台审核通过/拒绝、收货完成、删除拒绝申请。
-- 异步行为：RabbitMQ 延迟消息自动关闭超时订单，并验证锁定库存释放。
-- 性能基线：商品搜索、商品详情和购物车读取的轻量基线，不作为容量或专业压测结论。
+- 跨端状态流转：前台创建与支付、后台发货、前台确认收货、后台关闭、非法流转保护、操作历史。
+- 退货：完成订单申请退货、后台审核通过或拒绝、收货完成、删除拒绝申请。
+- 异步取消：超时订单自动关闭及锁定库存释放。
+- 性能基线：商品搜索、商品详情、购物车读取，以及 HTTP 和业务响应校验。
 
-不覆盖 UI、真实支付宝、优惠券与积分完整流程、后台权限 CRUD。范围边界是为了保证每个纳入的场景都有可验证的业务结果。
+完整回归共 31 个测试实例，具体场景见[测试矩阵](docs/test-matrix.md)，风险与断言设计见[测试策略](docs/test-strategy.md)。
+
+## 缺陷案例：订单关闭后仍占用库存
+
+后台关闭待付款订单时，接口成功、订单状态变为已关闭、关闭历史也存在。如果只检查这三个结果，该场景会通过。
+
+补充库存断言后，SKU 的 `stock` 仍为 500，但 `lock_stock` 从下单前的 0 增加到 1，关闭订单后没有恢复。仓库中的源码分析记录显示，后台 `close()` 更新状态并写入历史，没有执行前台取消路径中的库存解锁操作。
+
+该问题登记为 [GH-7](https://github.com/dotyucun/mall-commerce-api-automation/issues/7)，回归用例保留订单、历史和库存的联合检查，并在核实该缺陷表现时产生预期失败。测试后的数据清理负责恢复实验环境，后端缺陷仍需单独修复。详见[复现步骤与源码路径](docs/issue-6-admin-close-stock.md)。
+
+## 验证结果
+
+以下统计来自 2026-10-09 的本地实测，执行环境与原始结果见[实测结果](docs/results.md)。
+
+| 项目 | 结果 |
+| --- | --- |
+| 被测版本 | `macrozheng/mall@0504e86b1f1b6f1b8aa6a734d37a90fb67346be7` |
+| 普通回归 | 默认与逆序各运行一次，均为 `21 passed, 9 xfailed, 1 deselected` |
+| 完整回归 | `22 passed, 9 xfailed`，包含真实 RabbitMQ 超时取消 |
+| RabbitMQ 慢用例 | 单独运行 `1 passed, 30 deselected`，约 61 秒 |
+| 框架自测 | Windows 下 `35 passed`，覆盖运行脚本、响应脱敏、数据写入边界、性能业务断言及 xfail 行为 |
+| Locust 基线 | 20 用户、2 用户/秒、2 分钟；2190 请求、0 失败、聚合 P95 14ms |
+| 静态检查 | Ruff check 与 format check 通过 |
+
+9 个预期失败实例对应 6 类已确认的被测系统缺陷。缺陷列表见[已知缺陷](docs/known-issues.md)，环境、统计和报告截图见[实测结果](docs/results.md)。各次云端执行以对应提交的 [Actions 记录](https://github.com/dotyucun/mall-commerce-api-automation/actions)为准。
+
+## 项目范围
+
+本项目展示基于开源商城的接口测试实践；商城业务源码来自上游，测试工程与被测服务分别管理。支付场景调用商城内部订单状态接口；当前测试范围不包含 UI、真实支付、完整优惠券与积分、后台权限 CRUD 和生产部署。
+
+测试使用仅绑定本机端口的隔离环境，专用账号与数据串行执行。Locust 数字是单机读取基线，尚未验证并发下单、库存竞争、生产容量和长时间稳定性。XFAIL 表示缺陷已复现，仍不计入通过或修复数量。
 
 ## 工程结构
 
@@ -108,7 +137,7 @@ python -m pytest -m "known_issue"
 
 完整执行环境、限制与原始统计见[实测结果](docs/results.md)。GitHub Actions 会上传 Allure 原始结果、HTML、容器日志和 Locust HTML/CSV，不把生成物提交进源码仓库。
 
-Allure 将 XFAIL 显示为灰色 `skipped`，本次 9 条均为关联 Issue 的已确认缺陷，不是跳过执行。收尾核验及未覆盖范围见[核验清单](docs/final-audit.md)。
+Allure 将 XFAIL 显示为灰色 `skipped`；截图中 9 条对应已经执行并关联 Issue 的缺陷用例。环境、数据恢复和交付检查见[核验记录](docs/final-audit.md)。
 
 ## CI
 
@@ -117,4 +146,4 @@ Allure 将 XFAIL 显示为灰色 `skipped`，本次 9 条均为关联 Issue 的�
 - 每周及手动触发：RabbitMQ 订单超时慢用例。
 - 仅手动触发：Locust 轻量性能基线。
 
-所有工作流都从固定 mall commit 构建真实服务，不使用 Mock 替代被测业务。
+业务回归工作流从固定 mall commit 构建真实服务；框架自测使用隔离依赖的方式验证测试工具自身。

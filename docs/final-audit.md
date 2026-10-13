@@ -1,12 +1,12 @@
-# 收尾核验清单
+# 项目核验记录
 
-核验日期：2026-10-09。主项目是本仓库 `mall-commerce-api-automation`，不是早期 `mall-tiny-api-test`。
+本页汇总 `mall-commerce-api-automation` 在 2026-10-09 的核验项与证据。核验日期与执行结果对应，文档更新时间不代表重新完成实验。
 
 ## 范围与证据
 
 | 核验项 | 证据位置 |
 | --- | --- |
-| 固定被测源码，无源码复制或后端修改 | `config/default.yaml`、`scripts/mall-test.ps1`、`.gitignore` |
+| 固定被测源码，无源码复制或后端修改 | `src/mall_api_test/config/default.yaml`、`scripts/mall-test.ps1`、`.gitignore` |
 | 六层职责与统一代码风格 | `docs/architecture.md`、Ruff check/format、`.gitattributes` |
 | 31 个业务实例及场景边界 | `docs/test-matrix.md`、pytest 收集 |
 | 6 类缺陷对应 9 个严格预期失败 | `docs/known-issues.md`、GitHub Issues #1-5、#7 |
@@ -21,14 +21,12 @@
 | 构建包包含 YAML 配置 | setuptools package-data、wheel 内容核验 |
 | GitHub 构建、回归和产物可追溯 | [Actions](https://github.com/dotyucun/mall-commerce-api-automation/actions) |
 
-## 交付边界
+## 结果解读
 
-- 这是基于开源系统的个人测试工程，不是本人开发商城、企业实习或生产上线经历。
-- 测试工程可完成并交付，同时被测版本仍存在开放缺陷；XFAIL 不等于通过或修复，不能表述为被测商城已可安全投产。
-- 被测环境只绑定本机端口，测试专用账号与数据串行使用。不支持指向生产、共享业务队列或并发修改同一 SKU。
-- 支付调用是被测系统内部订单状态接口，不是支付宝沙箱交易或真实支付；没有 UI 自动化、完整优惠券/积分、生产部署流水线。
-- Locust 只是 20 用户读取基线，没有验证高并发下单、库存竞争、生产容量或长时间稳定性。
-- 框架自测可使用 Mock 隔离依赖；电商业务回归、MQ 和性能任务使用真实 mall 服务，不以 Mock 替代验收。
-- 不声称需求覆盖率、效率提升或线上缺陷率，没有相应统计分母和对照数据。
+业务回归包含 31 个实例，其中 22 个通过、9 个预期失败。预期失败对应 6 类尚未修复的被测系统缺陷，详细说明见[已知缺陷](known-issues.md)。框架自测验证测试工具自身，可以使用 Mock 隔离依赖；业务回归、MQ 和性能任务连接真实 mall 服务。
 
-完整执行统计和报告截图见[实测结果](results.md)。云端是否成功以对应提交的 Actions 结果为准，不将历史绿色运行当作新代码验证。
+本项目的成果是测试工程、缺陷复现和验证证据。被测商城来自开源项目，支付场景使用内部订单状态接口。当前适用环境、已覆盖功能和待扩展范围集中说明在 [README](../README.md#项目范围)。
+
+Locust 记录是 20 用户的单机读取基线。需求覆盖率、效率提升和线上缺陷率尚无对应统计分母或对照数据，因此现有实验不支持这些指标结论。
+
+完整执行统计和截图见[实测结果](results.md)。云端验证使用对应提交的 [Actions 记录](https://github.com/dotyucun/mall-commerce-api-automation/actions)。
