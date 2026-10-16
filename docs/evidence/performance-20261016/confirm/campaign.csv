@@ -1,0 +1,3 @@
+repeat,users,measured_seconds,name,requests,failures,rps,success_rps,failure_ratio,average_ms,max_ms,p95_ms,p99_ms,generator_cpu_median_percent,stop_reasons,comparison
+1,80,300,Aggregated,174651,0,582.17,582.17,0.0,23.008208325745652,150.9181000001263,55,73,80.6,,first_level
+2,80,300,Aggregated,174698,1,582.3266666666667,582.3233333333334,5.7241639858498666e-06,23.116788071410735,151.68529999937164,55,75,80.1,,first_level

@@ -1,7 +1,10 @@
 param(
     [Parameter(Position = 0)]
-    [ValidateSet("bootstrap", "test", "full", "slow", "verify", "report", "performance", "stop", "down", "status")]
-    [string]$Action = "test"
+    [ValidateSet("bootstrap", "test", "full", "slow", "verify", "report", "performance", "performance-steps", "stop", "down", "status")]
+    [string]$Action = "test",
+    [ValidateSet("smoke", "explore", "confirm")]
+    [string]$PerformanceProfile = "explore",
+    [int[]]$PerformanceUsers
 )
 
 $ErrorActionPreference = "Stop"
@@ -159,6 +162,17 @@ switch ($Action) {
             "-u", "20", "-r", "2", "-t", "2m", "--html", (Join-Path $reportDir "report.html"),
             "--csv", (Join-Path $reportDir "metrics")
         )
+    }
+    "performance-steps" {
+        Assert-Environment
+        Ensure-Docker
+        $arguments = @("-m", "performance.step_load", "--profile", $PerformanceProfile)
+        if ($PerformanceUsers) {
+            $arguments += "--users"
+            $arguments += @($PerformanceUsers | ForEach-Object { $_.ToString() })
+        }
+        Push-Location $Root
+        try { Invoke-Checked "python" $arguments } finally { Pop-Location }
     }
     "stop" {
         Ensure-Docker
