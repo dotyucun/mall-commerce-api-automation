@@ -24,6 +24,10 @@ def chart(results: list[dict], field: str, title: str, unit: str) -> str:
         '<g font-family="sans-serif" font-size="13" fill="#243142">',
         f'<text x="{left}" y="25" font-size="18">{html.escape(title)}</text>',
     ]
+    if any(item.get("stop_reasons") for item in results):
+        parts.append(
+            '<text x="360" y="25" fill="#b02020">红点：触发停止条件，不作为容量结论</text>'
+        )
     for index in range(6):
         value = maximum * index / 5
         parts += [
@@ -46,10 +50,12 @@ def chart(results: list[dict], field: str, title: str, unit: str) -> str:
         )
         parts.append(f'<polyline points="{points}" fill="none" stroke="{color}" stroke-width="2"/>')
         for item in items:
+            point_color = "#b02020" if item.get("stop_reasons") else color
+            warning = html.escape("; ".join(item.get("stop_reasons", [])))
             parts.append(
                 f'<circle cx="{x(item["users"]):.2f}" cy="{y(item["total"][field] or 0):.2f}" '
-                f'r="4" fill="{color}"><title>repeat={repeat}, users={item["users"]}, '
-                f"{field}={item['total'][field]}</title></circle>"
+                f'r="4" fill="{point_color}"><title>repeat={repeat}, users={item["users"]}, '
+                f"{field}={item['total'][field]} {warning}</title></circle>"
             )
         parts.append(
             f'<text x="{left + 150 * (repeat - 1)}" y="{height - 8}" fill="{color}">'
@@ -77,10 +83,11 @@ def render(folder: Path) -> None:
             item["users"],
             item["measured_seconds"],
             total["requests"],
+            total["failures"],
             round(total["success_rps"], 2),
             total["p95_ms"],
             total["p99_ms"],
-            f"{total['failure_ratio']:.2%}",
+            f"{total['failure_ratio']:.5%}",
             f"{item['generator_cpu_median_percent']:.1f}%",
             "; ".join(item["stop_reasons"]) or item["comparison"],
         )
@@ -95,7 +102,8 @@ def render(folder: Path) -> None:
         "<p>固定热点数据、单会员、独立会话；预热及登录不计入稳态。"
         "每档 P95 独立计算，不平均分位数。候选拐点不是已确认容量上限。</p>"
         '<img src="success_rps.svg" alt="成功 RPS 曲线"><img src="p95_ms.svg" alt="P95 曲线">'
-        "<table><tr><th>重复</th><th>用户</th><th>窗口秒</th><th>请求</th><th>成功 RPS</th>"
+        "<table><tr><th>重复</th><th>用户</th><th>窗口秒</th><th>请求</th>"
+        "<th>失败数</th><th>成功 RPS</th>"
         "<th>P95 ms</th><th>P99 ms</th><th>失败率</th><th>压测进程 CPU 中位数</th>"
         "<th>判定</th></tr>" + "".join(rows) + "</table></html>",
         encoding="utf-8",

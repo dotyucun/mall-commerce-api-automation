@@ -1,0 +1,40 @@
+{
+  "created_utc": "2026-10-16T10:48:05.064684+00:00",
+  "python": "3.12.6",
+  "os": "Windows-11-10.0.26200-SP0",
+  "logical_cpus": 32,
+  "host_memory_gb": 63.8,
+  "docker_version": "29.4.3",
+  "docker_cpus": 32,
+  "docker_memory_gb": 31.24,
+  "sut_commit": "0504e86b1f1b6f1b8aa6a734d37a90fb67346be7",
+  "test_commit": "b925817070e6f0fc025103fa7c1c72dcc8a2c2b4",
+  "portal_base_url": "http://127.0.0.1:8085",
+  "source_sha256": {
+    "performance/step_load.py": "6cc0ad85edf7c327afa483219936c9f1c4902ad14b1e885424651d23dc97a6d5",
+    "performance/resource_monitor.py": "eb7196a6b317d2c9624a4705af0c34eab7c412db61498bf5e16e8d5ecde2815a",
+    "performance/locustfile.py": "aa8cde118f6edff46ed9721742525810ae24f6dc7c7d4a9f71a775fee4a02eae",
+    "performance/steps.yaml": "c40844ca6392daf20f06d672da749f32f8c830683a7e922eb9e635b25e40026f",
+    "src/mall_api_test/common/performance_steps.py": "dfb85e3c49da2bfa80bbe44d3d0208964818f795c9434d3aca06b17682068ed4",
+    "src/mall_api_test/common/performance_window.py": "72e2df452f9035cb3deaacc5ffd8a3772775afe183193541de1fe55b1475d738",
+    "src/mall_api_test/repositories/performance_repository.py": "e8dc0767c9deea987fc9d33963ac510769a095825c398a46b7d898a8dd4e50b0"
+  },
+  "running_containers": [
+    "mall-commerce-api-test-mall-portal-1 eclipse-temurin:17-jre",
+    "mall-commerce-api-test-mall-admin-1 eclipse-temurin:17-jre",
+    "mall-commerce-api-test-mysql-1 mysql:5.7",
+    "mall-commerce-api-test-mongo-1 mongo:5",
+    "mall-commerce-api-test-redis-1 redis:7-alpine",
+    "mall-commerce-api-test-rabbitmq-1 rabbitmq:3.10.5-management",
+    "mall-mysql mysql:5.7",
+    "mall-redis redis:7",
+    "mall-mongo mongo:5",
+    "mall-rabbitmq rabbitmq:3.10.5-management",
+    "mall-tiny-app mall-tiny/local-test:1.0.0",
+    "mall-tiny-mysql mysql:8.0",
+    "mall-tiny-redis redis:5",
+    "docker-study-nginx nginx"
+  ],
+  "workload": "single dedicated member, fixed product/search, task weights 3:2:1",
+  "statistics": "completions within steady window; starts before warmup end excluded"
+}

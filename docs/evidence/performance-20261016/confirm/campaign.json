@@ -1,0 +1,153 @@
+[
+  {
+    "profile": "confirm",
+    "repeat": 1,
+    "users": 80,
+    "ready_users": 80,
+    "wait_seconds": 0.1,
+    "start_utc": "2026-10-16T10:58:32.570386+00:00",
+    "end_utc": "2026-10-16T11:03:32.570386+00:00",
+    "measured_seconds": 300,
+    "warmup_seconds": 30,
+    "total": {
+      "name": "Aggregated",
+      "requests": 174651,
+      "failures": 0,
+      "rps": 582.17,
+      "success_rps": 582.17,
+      "failure_ratio": 0.0,
+      "average_ms": 23.008208325745652,
+      "max_ms": 150.9181000001263,
+      "p95_ms": 55,
+      "p99_ms": 73
+    },
+    "endpoints": [
+      {
+        "name": "GET /cart/list",
+        "requests": 29093,
+        "failures": 0,
+        "rps": 96.97666666666667,
+        "success_rps": 96.97666666666667,
+        "failure_ratio": 0.0,
+        "average_ms": 19.592608070657377,
+        "max_ms": 125.4503999989538,
+        "p95_ms": 47,
+        "p99_ms": 64
+      },
+      {
+        "name": "GET /product/detail/:id",
+        "requests": 58378,
+        "failures": 0,
+        "rps": 194.59333333333333,
+        "success_rps": 194.59333333333333,
+        "failure_ratio": 0.0,
+        "average_ms": 25.144157298964654,
+        "max_ms": 121.3553999987198,
+        "p95_ms": 58,
+        "p99_ms": 77
+      },
+      {
+        "name": "GET /product/search",
+        "requests": 87180,
+        "failures": 0,
+        "rps": 290.6,
+        "success_rps": 290.6,
+        "failure_ratio": 0.0,
+        "average_ms": 22.717747544174966,
+        "max_ms": 150.9181000001263,
+        "p95_ms": 54,
+        "p99_ms": 72
+      }
+    ],
+    "tail_requests": 13,
+    "tail_failures": 0,
+    "started_requests": 174664,
+    "incomplete_requests": 0,
+    "user_exceptions": 0,
+    "resource_samples": 25,
+    "resource_errors": [],
+    "generator_cpu_median_percent": 80.6,
+    "failures": [],
+    "stop_reasons": [],
+    "comparison": "first_level"
+  },
+  {
+    "profile": "confirm",
+    "repeat": 2,
+    "users": 80,
+    "ready_users": 80,
+    "wait_seconds": 0.1,
+    "start_utc": "2026-10-16T11:04:23.379805+00:00",
+    "end_utc": "2026-10-16T11:09:23.379805+00:00",
+    "measured_seconds": 300,
+    "warmup_seconds": 30,
+    "total": {
+      "name": "Aggregated",
+      "requests": 174698,
+      "failures": 1,
+      "rps": 582.3266666666667,
+      "success_rps": 582.3233333333334,
+      "failure_ratio": 5.7241639858498666e-06,
+      "average_ms": 23.116788071410735,
+      "max_ms": 151.68529999937164,
+      "p95_ms": 55,
+      "p99_ms": 75
+    },
+    "endpoints": [
+      {
+        "name": "GET /cart/list",
+        "requests": 29103,
+        "failures": 0,
+        "rps": 97.01,
+        "success_rps": 97.01,
+        "failure_ratio": 0.0,
+        "average_ms": 19.68552738205758,
+        "max_ms": 143.2883999987098,
+        "p95_ms": 48,
+        "p99_ms": 68
+      },
+      {
+        "name": "GET /product/detail/:id",
+        "requests": 57999,
+        "failures": 1,
+        "rps": 193.33,
+        "success_rps": 193.32666666666665,
+        "failure_ratio": 1.72416765806307e-05,
+        "average_ms": 25.336835723021473,
+        "max_ms": 151.68529999937164,
+        "p95_ms": 59,
+        "p99_ms": 80
+      },
+      {
+        "name": "GET /product/search",
+        "requests": 87596,
+        "failures": 0,
+        "rps": 291.9866666666667,
+        "success_rps": 291.9866666666667,
+        "failure_ratio": 0.0,
+        "average_ms": 22.786857893051348,
+        "max_ms": 149.51839999775984,
+        "p95_ms": 54,
+        "p99_ms": 74
+      }
+    ],
+    "tail_requests": 13,
+    "tail_failures": 0,
+    "started_requests": 174711,
+    "incomplete_requests": 0,
+    "user_exceptions": 0,
+    "resource_samples": 25,
+    "resource_errors": [],
+    "generator_cpu_median_percent": 80.1,
+    "failures": [
+      {
+        "name": "GET /product/detail/:id",
+        "method": "GET",
+        "error": "CatchResponseError('HTTP status 0')",
+        "occurrences": 1
+      }
+    ],
+    "stop_reasons": [],
+    "comparison": "first_level"
+  }
+]
