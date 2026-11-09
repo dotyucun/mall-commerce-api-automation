@@ -46,8 +46,8 @@
 | --- | --- |
 | 被测版本 | `macrozheng/mall@0504e86b1f1b6f1b8aa6a734d37a90fb67346be7` |
 | 普通回归 | 默认顺序连续两轮、逆序一轮，均为 `21 passed, 13 xfailed, 1 deselected` |
-| 完整回归 | `22 passed, 13 xfailed`，包含真实 RabbitMQ 超时取消，耗时 157.94 秒 |
-| 框架自测 | Windows 下共 70 个自测，覆盖运行脚本、脱敏、数据写入边界、业务断言、xfail、阶梯窗口记账及证据审计；Linux CI 为 65 个 |
+| 完整回归 | 整合版 `22 passed, 13 xfailed`，包含真实 RabbitMQ 超时取消，耗时 162.23 秒 |
+| 框架自测 | Windows 下 `70 passed`，覆盖运行脚本、脱敏、数据写入边界、业务断言、xfail、阶梯窗口记账及证据审计；Linux CI 为 65 个 |
 | Locust 历史基线（2026-10-09） | 20 用户、2 用户/秒、2 分钟；2190 请求、0 失败、聚合 P95 14ms；本次未重跑 |
 | 静态检查 | Ruff check 与 format check 通过 |
 
