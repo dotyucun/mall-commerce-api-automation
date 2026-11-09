@@ -1,0 +1,71 @@
+{
+  "profile": "explore",
+  "repeat": 1,
+  "users": 40,
+  "ready_users": 40,
+  "wait_seconds": 0.1,
+  "start_utc": "2026-11-09T09:17:54.545145+00:00",
+  "end_utc": "2026-11-09T09:18:54.545145+00:00",
+  "measured_seconds": 60,
+  "warmup_seconds": 30,
+  "total": {
+    "name": "Aggregated",
+    "requests": 20048,
+    "failures": 0,
+    "rps": 334.1333333333333,
+    "success_rps": 334.1333333333333,
+    "failure_ratio": 0.0,
+    "average_ms": 12.810941116429746,
+    "max_ms": 60.61060004867613,
+    "p95_ms": 24,
+    "p99_ms": 31
+  },
+  "endpoints": [
+    {
+      "name": "GET /cart/list",
+      "requests": 3346,
+      "failures": 0,
+      "rps": 55.766666666666666,
+      "success_rps": 55.766666666666666,
+      "failure_ratio": 0.0,
+      "average_ms": 10.89745801046838,
+      "max_ms": 51.55430000741035,
+      "p95_ms": 21,
+      "p99_ms": 28
+    },
+    {
+      "name": "GET /product/detail/:id",
+      "requests": 6667,
+      "failures": 0,
+      "rps": 111.11666666666666,
+      "success_rps": 111.11666666666666,
+      "failure_ratio": 0.0,
+      "average_ms": 13.985592049715706,
+      "max_ms": 60.61060004867613,
+      "p95_ms": 26,
+      "p99_ms": 35
+    },
+    {
+      "name": "GET /product/search",
+      "requests": 10035,
+      "failures": 0,
+      "rps": 167.25,
+      "success_rps": 167.25,
+      "failure_ratio": 0.0,
+      "average_ms": 12.66855115134048,
+      "max_ms": 51.69340001884848,
+      "p95_ms": 24,
+      "p99_ms": 30
+    }
+  ],
+  "tail_requests": 10,
+  "tail_failures": 0,
+  "started_requests": 20058,
+  "incomplete_requests": 0,
+  "user_exceptions": 0,
+  "resource_samples": 5,
+  "resource_errors": [],
+  "generator_cpu_median_percent": 68.4,
+  "failures": [],
+  "stop_reasons": []
+}
