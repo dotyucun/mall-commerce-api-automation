@@ -1,0 +1,27 @@
+portal_base_url: http://127.0.0.1:8085
+wait_seconds: 0.1
+spawn_rate: 10
+ready_timeout_seconds: 90
+sample_interval_seconds: 10
+cooldown_seconds: 10
+max_failure_ratio: 0.01
+max_p95_ms: 1000
+generator_cpu_warning_percent: 90
+profiles:
+  smoke:
+    users: [1]
+    warmup_seconds: 2
+    measure_seconds: 10
+    repeats: 1
+    sample_interval_seconds: 2
+    cooldown_seconds: 0
+  explore:
+    users: [10, 20, 40, 80]
+    warmup_seconds: 30
+    measure_seconds: 60
+    repeats: 1
+  confirm:
+    users: [10, 20, 40, 80]
+    warmup_seconds: 30
+    measure_seconds: 300
+    repeats: 2

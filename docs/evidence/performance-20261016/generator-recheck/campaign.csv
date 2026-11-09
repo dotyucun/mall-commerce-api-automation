@@ -1,0 +1,2 @@
+repeat,users,measured_seconds,name,requests,failures,rps,success_rps,failure_ratio,average_ms,max_ms,p95_ms,p99_ms,generator_cpu_median_percent,stop_reasons,comparison
+1,160,60,Aggregated,56618,0,943.6333333333333,943.6333333333333,0.0,39.687809587049934,185.87230000048294,68,92,98.8,generator_cpu_limit,first_level

@@ -1,6 +1,8 @@
 # 项目核验记录
 
-本页汇总 `mall-commerce-api-automation` 在 2026-11-09 的功能回归核验项与证据。Locust 和报告截图保留历史日期，文档更新时间不代表重新完成性能实验。
+本页汇总 `mall-commerce-api-automation` 在 2026-11-09 的整合核验项与证据。性能实验和报告截图分别保留执行日期，文档更新时间不代表重新完成实验。
+
+2026-10-16 阶梯性能实验记录见[历史实验](performance-20261016.md)，2026-11-09 的四档探索和证据核算见[复核记录](performance-review-20261109.md)。工具、数据和文档纳入同一工程，实验日期与口径仍分别保留。
 
 ## 范围与证据
 
@@ -17,6 +19,7 @@
 | 数据清理和库存恢复可核验 | `scripts/mall-test.ps1 verify`、`docs/test-data.md` |
 | MQ 实际超时取消与设置恢复 | `tests/async_workflows/test_order_timeout.py` |
 | 读取性能基线与业务响应门禁 | `performance/locustfile.py`、`qa/test_locust_baseline.py` |
+| 阶梯读取、窗口记账、资源采集与证据审计 | `performance/step_load.py`、`performance/resource_monitor.py`、`performance/audit.py`、`docs/performance-review-20261109.md` |
 | 常规关闭不删除本地数据卷 | `scripts/mall-test.ps1 stop/down` |
 | 构建包包含 YAML 配置 | setuptools package-data、wheel 内容核验 |
 | GitHub 构建、回归和产物可追溯 | [Actions](https://github.com/dotyucun/mall-commerce-api-automation/actions) |
@@ -29,6 +32,6 @@
 
 本项目的成果是测试工程、缺陷复现和验证证据。被测商城来自开源项目，支付场景使用内部订单状态接口。当前适用环境、已覆盖功能和待扩展范围集中说明在 [README](../README.md#项目范围)。
 
-Locust 记录是 20 用户的单机读取基线。需求覆盖率、效率提升和线上缺陷率尚无对应统计分母或对照数据，因此现有实验不支持这些指标结论。
+Locust 包含 20 用户轻量基线及独立阶梯读取实验。未确认生产容量上限；需求覆盖率、效率提升和线上缺陷率尚无统计分母或对照数据，现有实验不支持这些指标结论。
 
 完整执行统计和截图见[实测结果](results.md)。云端验证使用对应提交的 [Actions 记录](https://github.com/dotyucun/mall-commerce-api-automation/actions)。

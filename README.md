@@ -26,7 +26,7 @@
 - 跨端状态流转：前台创建与支付、后台发货、前台确认收货、后台关闭、非法流转保护、操作历史。
 - 退货：完成订单申请退货、后台审核通过或拒绝、收货完成、删除拒绝申请。
 - 异步取消：超时订单自动关闭及锁定库存释放。
-- 性能基线：商品搜索、商品详情、购物车读取，以及 HTTP 和业务响应校验。
+- 读取负载实验：商品搜索、商品详情、购物车读取，校验 HTTP 与业务响应，区分轻量基线和阶梯实验。
 
 完整回归共 35 个测试实例，具体场景见[测试矩阵](docs/test-matrix.md)，风险与断言设计见[测试策略](docs/test-strategy.md)。
 
@@ -46,18 +46,38 @@
 | --- | --- |
 | 被测版本 | `macrozheng/mall@0504e86b1f1b6f1b8aa6a734d37a90fb67346be7` |
 | 普通回归 | 默认顺序连续两轮、逆序一轮，均为 `21 passed, 13 xfailed, 1 deselected` |
-| 完整回归 | `22 passed, 13 xfailed`，包含真实 RabbitMQ 超时取消，耗时 157.94 秒 |
-| 框架自测 | Windows 下 `35 passed`，覆盖运行脚本、响应脱敏、数据写入边界、性能业务断言及 xfail 行为 |
+| 完整回归 | 整合版 `22 passed, 13 xfailed`，包含真实 RabbitMQ 超时取消，耗时 162.23 秒 |
+| 框架自测 | Windows 下 `70 passed`，覆盖运行脚本、脱敏、数据写入边界、业务断言、xfail、阶梯窗口记账及证据审计；Linux CI 为 65 个 |
 | Locust 历史基线（2026-10-09） | 20 用户、2 用户/秒、2 分钟；2190 请求、0 失败、聚合 P95 14ms；本次未重跑 |
 | 静态检查 | Ruff check 与 format check 通过 |
 
 13 个预期失败实例对应 8 类已确认的被测系统缺陷，其中新增购物车规格越权、非正数量相关的 4 个实例。缺陷列表见[已知缺陷](docs/known-issues.md)，环境、统计和报告截图见[实测结果](docs/results.md)。各次云端执行以对应提交的 [Actions 记录](https://github.com/dotyucun/mall-commerce-api-automation/actions)为准。
 
+### 2026-11-09 阶梯读取验证
+
+阶梯工具与业务回归共用本项目的配置、专用账号和 Compose 环境，通过统一脚本运行，负载执行期间不同时运行功能回归。默认 10/20/40/80 用户各测量 60 秒，本次共 74261 个稳态请求、0 失败；80 用户档成功 RPS 656.78、P95 27ms。窗口后的 21 个尾部请求单独记账，无失败和未完成请求；原始摘要、资源采样与源码指纹核算通过。详见[复核记录](docs/performance-review-20261109.md)。这是一轮固定热点读取验证，不代表服务端容量上限。
+
+### 历史阶梯读取实验（2026-10-16）
+
+将用户等待时间固定为 0.1 秒，每档预热 30 秒、稳态测量 60 秒；登录与预热不进入稳态统计。任务为搜索/详情/购物车读取，权重 3:2:1，使用单专用会员与固定热点商品，不模拟真实生产比例。
+
+| 用户数 | 成功 RPS | 聚合 P95 | 稳态失败数 | 负载进程 CPU 中位数 |
+| --- | --- | --- | --- | --- |
+| 10 | 82.83 | 19ms | 0 | 11.0% |
+| 20 | 169.67 | 22ms | 0 | 20.1% |
+| 40 | 329.62 | 31ms | 0 | 33.2% |
+| 80 | 589.30 | 51ms | 0 | 88.0% |
+| 160 | 679.75 | 130ms | 0 | **97.1%，触发发生器门槛** |
+
+80 用户延长为两轮各 5 分钟，成功 RPS 分别为 582.17/582.32，P95 均为 55ms；第二轮 174698 请求中有 **1 次失败（0.00057%）**，保留在报告中。160 用户复测再次触发负载进程 CPU 门槛，但吞吐和延迟与首轮差异明显，因此 **未确认服务端容量上限，320 用户未执行**。
+
+本轮没有修改商城源码，也没有完成服务端性能优化。不能将不同等待模型下的新旧 RPS 当作优化提升。实验方法、失败记录、曲线与可审计原始数据见 [阶梯实验记录](docs/performance-20261016.md)，执行步骤见 [运行说明](docs/performance-steps.md)。
+
 ## 项目范围
 
 本项目展示基于开源商城的接口测试实践；商城业务源码来自上游，测试工程与被测服务分别管理。支付场景调用商城内部订单状态接口；当前测试范围不包含 UI、真实支付、完整优惠券与积分、后台权限 CRUD 和生产部署。
 
-测试使用仅绑定本机端口的隔离环境，专用账号与数据串行执行。Locust 数字是单机读取基线，尚未验证并发下单、库存竞争、生产容量和长时间稳定性。XFAIL 表示缺陷已复现，仍不计入通过或修复数量。
+测试使用仅绑定本机端口的隔离环境，专用账号与数据串行执行。Locust 数字来自同机部署的读取基线与阶梯实验，尚未验证并发下单、库存竞争、生产容量和长时间稳定性。XFAIL 表示缺陷已复现，仍不计入通过或修复数量。
 
 ## 工程结构
 
@@ -72,7 +92,7 @@ src/mall_api_test/
 tests/             # 按 auth/product/cart/order/returns/async 分域
 docker/            # Compose、服务配置、测试种子数据
 scripts/           # 一键启动、测试、报告、性能与清理
-performance/       # Locust 基线任务
+performance/       # Locust 基线、阶梯运行、独立资源采集与报告审计
 docs/              # 架构、策略、矩阵、数据、缺陷与实测证据
 ```
 
@@ -106,6 +126,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\mall-test.ps1 full
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\mall-test.ps1 slow
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\mall-test.ps1 verify
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\mall-test.ps1 performance
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\mall-test.ps1 performance-steps -PerformanceProfile explore
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\mall-test.ps1 stop
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\mall-test.ps1 down
 ```
@@ -136,7 +157,7 @@ python -m pytest -m "known_issue"
 
 ![Allure Behaviors](docs/images/allure-behaviors-20261009.jpg)
 
-完整执行环境、限制与原始统计见[实测结果](docs/results.md)。GitHub Actions 会上传 Allure 原始结果、HTML、容器日志和 Locust HTML/CSV，不把生成物提交进源码仓库。
+完整执行环境、限制与原始统计见[实测结果](docs/results.md)。GitHub Actions 上传完整运行产物；`reports/`、缓存、JAR 和日志不入库。经审阅的小型性能证据副本保存在 `docs/evidence/`，用于长期核对 README 中的数字。
 
 Allure 将 XFAIL 显示为灰色 `skipped`；历史截图中的 9 条对应当时已经执行并关联 Issue 的缺陷用例，当前为 13 条。环境、数据恢复和交付检查见[核验记录](docs/final-audit.md)。
 
@@ -145,6 +166,6 @@ Allure 将 XFAIL 显示为灰色 `skipped`；历史截图中的 9 条对应当�
 - PR：Ruff、框架自测、收集检查、非 slow 回归、Allure HTML、容器日志。
 - main 与手动触发：同样的检查加完整回归，包含 slow。
 - 每周及手动触发：RabbitMQ 订单超时慢用例。
-- 仅手动触发：Locust 轻量性能基线。
+- 仅手动触发：Locust 轻量基线，或独立的 smoke/explore/confirm 阶梯实验；不同运行环境的数值不混用。
 
 业务回归工作流从固定 mall commit 构建真实服务；框架自测使用隔离依赖的方式验证测试工具自身。

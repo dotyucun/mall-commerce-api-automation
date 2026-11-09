@@ -12,7 +12,13 @@ SHELLS = [path for name in ("pwsh", "powershell") if (path := shutil.which(name)
 @pytest.mark.parametrize("shell", SHELLS)
 @pytest.mark.parametrize(
     "action,failed_tool",
-    [("test", "python"), ("slow", "python"), ("report", "allure"), ("performance", "locust")],
+    [
+        ("test", "python"),
+        ("slow", "python"),
+        ("report", "allure"),
+        ("performance", "locust"),
+        ("performance-steps", "python"),
+    ],
 )
 def test_native_command_failure_is_not_reported_as_success(tmp_path, action, failed_tool, shell):
     scripts = tmp_path / "scripts"
@@ -26,6 +32,13 @@ def test_native_command_failure_is_not_reported_as_success(tmp_path, action, fai
         stub = bin_dir / failed_tool
         stub.write_text("#!/bin/sh\nexit 17\n", encoding="ascii")
         stub.chmod(0o755)
+    if action == "performance-steps":
+        if os.name == "nt":
+            (bin_dir / "docker.cmd").write_text("@exit /b 0\n", encoding="ascii")
+        else:
+            docker = bin_dir / "docker"
+            docker.write_text("#!/bin/sh\nexit 0\n", encoding="ascii")
+            docker.chmod(0o755)
     env = os.environ.copy()
     env["PATH"] = str(bin_dir) + os.pathsep + env["PATH"]
     for name in (

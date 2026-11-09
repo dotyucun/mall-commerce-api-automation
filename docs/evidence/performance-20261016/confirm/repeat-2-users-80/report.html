@@ -1,0 +1,78 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>Locust 阶段实测</title><style>body{font:16px sans-serif;margin:2rem}td,th{padding:.5rem;border:1px solid #ccc}table{border-collapse:collapse}</style><h1>Locust 阶段实测</h1><p>仅统计稳态窗口内开始且完成的请求；预热和登录不计入。跨窗口完成的请求单独记录，不混入分位数。</p><pre>{
+  &quot;profile&quot;: &quot;confirm&quot;,
+  &quot;repeat&quot;: 2,
+  &quot;users&quot;: 80,
+  &quot;ready_users&quot;: 80,
+  &quot;wait_seconds&quot;: 0.1,
+  &quot;start_utc&quot;: &quot;2026-10-16T11:04:23.379805+00:00&quot;,
+  &quot;end_utc&quot;: &quot;2026-10-16T11:09:23.379805+00:00&quot;,
+  &quot;measured_seconds&quot;: 300,
+  &quot;warmup_seconds&quot;: 30,
+  &quot;total&quot;: {
+    &quot;name&quot;: &quot;Aggregated&quot;,
+    &quot;requests&quot;: 174698,
+    &quot;failures&quot;: 1,
+    &quot;rps&quot;: 582.3266666666667,
+    &quot;success_rps&quot;: 582.3233333333334,
+    &quot;failure_ratio&quot;: 5.7241639858498666e-06,
+    &quot;average_ms&quot;: 23.116788071410735,
+    &quot;max_ms&quot;: 151.68529999937164,
+    &quot;p95_ms&quot;: 55,
+    &quot;p99_ms&quot;: 75
+  },
+  &quot;endpoints&quot;: [
+    {
+      &quot;name&quot;: &quot;GET /cart/list&quot;,
+      &quot;requests&quot;: 29103,
+      &quot;failures&quot;: 0,
+      &quot;rps&quot;: 97.01,
+      &quot;success_rps&quot;: 97.01,
+      &quot;failure_ratio&quot;: 0.0,
+      &quot;average_ms&quot;: 19.68552738205758,
+      &quot;max_ms&quot;: 143.2883999987098,
+      &quot;p95_ms&quot;: 48,
+      &quot;p99_ms&quot;: 68
+    },
+    {
+      &quot;name&quot;: &quot;GET /product/detail/:id&quot;,
+      &quot;requests&quot;: 57999,
+      &quot;failures&quot;: 1,
+      &quot;rps&quot;: 193.33,
+      &quot;success_rps&quot;: 193.32666666666665,
+      &quot;failure_ratio&quot;: 1.72416765806307e-05,
+      &quot;average_ms&quot;: 25.336835723021473,
+      &quot;max_ms&quot;: 151.68529999937164,
+      &quot;p95_ms&quot;: 59,
+      &quot;p99_ms&quot;: 80
+    },
+    {
+      &quot;name&quot;: &quot;GET /product/search&quot;,
+      &quot;requests&quot;: 87596,
+      &quot;failures&quot;: 0,
+      &quot;rps&quot;: 291.9866666666667,
+      &quot;success_rps&quot;: 291.9866666666667,
+      &quot;failure_ratio&quot;: 0.0,
+      &quot;average_ms&quot;: 22.786857893051348,
+      &quot;max_ms&quot;: 149.51839999775984,
+      &quot;p95_ms&quot;: 54,
+      &quot;p99_ms&quot;: 74
+    }
+  ],
+  &quot;tail_requests&quot;: 13,
+  &quot;tail_failures&quot;: 0,
+  &quot;started_requests&quot;: 174711,
+  &quot;incomplete_requests&quot;: 0,
+  &quot;user_exceptions&quot;: 0,
+  &quot;resource_samples&quot;: 25,
+  &quot;resource_errors&quot;: [],
+  &quot;generator_cpu_median_percent&quot;: 80.1,
+  &quot;failures&quot;: [
+    {
+      &quot;name&quot;: &quot;GET /product/detail/:id&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;error&quot;: &quot;CatchResponseError(&#x27;HTTP status 0&#x27;)&quot;,
+      &quot;occurrences&quot;: 1
+    }
+  ],
+  &quot;stop_reasons&quot;: []
+}</pre><table><tr><th>name</th><th>requests</th><th>failures</th><th>rps</th><th>success_rps</th><th>failure_ratio</th><th>average_ms</th><th>max_ms</th><th>p95_ms</th><th>p99_ms</th></tr><tr><td>Aggregated</td><td>174698</td><td>1</td><td>582.3266666666667</td><td>582.3233333333334</td><td>5.7241639858498666e-06</td><td>23.116788071410735</td><td>151.68529999937164</td><td>55</td><td>75</td></tr><tr><td>GET /cart/list</td><td>29103</td><td>0</td><td>97.01</td><td>97.01</td><td>0.0</td><td>19.68552738205758</td><td>143.2883999987098</td><td>48</td><td>68</td></tr><tr><td>GET /product/detail/:id</td><td>57999</td><td>1</td><td>193.33</td><td>193.32666666666665</td><td>1.72416765806307e-05</td><td>25.336835723021473</td><td>151.68529999937164</td><td>59</td><td>80</td></tr><tr><td>GET /product/search</td><td>87596</td><td>0</td><td>291.9866666666667</td><td>291.9866666666667</td><td>0.0</td><td>22.786857893051348</td><td>149.51839999775984</td><td>54</td><td>74</td></tr></table></html>

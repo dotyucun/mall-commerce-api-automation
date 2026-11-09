@@ -2,6 +2,13 @@ name: Locust Performance Baseline
 
 on:
   workflow_dispatch:
+    inputs:
+      mode:
+        description: "基线或独立阶梯实验（不同运行环境的数字不可混用）"
+        required: true
+        default: baseline
+        type: choice
+        options: [baseline, smoke, explore, confirm]
 
 permissions:
   contents: read
@@ -18,7 +25,7 @@ env:
 jobs:
   baseline:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -33,9 +40,16 @@ jobs:
       - name: Build and start real mall services
         shell: pwsh
         run: ./scripts/mall-test.ps1 bootstrap
-      - name: Run 20-user read-heavy baseline
+      - name: Run selected read-only experiment
         shell: pwsh
-        run: ./scripts/mall-test.ps1 performance
+        env:
+          PERFORMANCE_MODE: ${{ inputs.mode }}
+        run: |
+          if ($env:PERFORMANCE_MODE -eq "baseline") {
+            ./scripts/mall-test.ps1 performance
+          } else {
+            ./scripts/mall-test.ps1 performance-steps -PerformanceProfile $env:PERFORMANCE_MODE
+          }
       - name: Capture container logs
         if: always()
         run: |

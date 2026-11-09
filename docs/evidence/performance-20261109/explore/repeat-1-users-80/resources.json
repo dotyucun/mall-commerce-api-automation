@@ -1,0 +1,427 @@
+[
+  {
+    "utc": "2026-11-09T09:19:48.183888+00:00",
+    "elapsed_seconds": 2.375,
+    "generator_cpu_percent": 82.3,
+    "generator_rss_mb": 70.91015625,
+    "host_memory_percent": 48.4,
+    "containers": [
+      {
+        "BlockIO": "0B / 786kB",
+        "CPUPerc": "0.20%",
+        "Container": "74f6b2b933b2",
+        "ID": "74f6b2b933b2",
+        "MemPerc": "2.14%",
+        "MemUsage": "685.3MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-mall-admin-1",
+        "NetIO": "614kB / 221kB",
+        "PIDs": "73"
+      },
+      {
+        "BlockIO": "438kB / 198MB",
+        "CPUPerc": "278.91%",
+        "Container": "ca02e5c8a00f",
+        "ID": "ca02e5c8a00f",
+        "MemPerc": "3.18%",
+        "MemUsage": "1017MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-mall-portal-1",
+        "NetIO": "512MB / 373MB",
+        "PIDs": "103"
+      },
+      {
+        "BlockIO": "4.94MB / 139MB",
+        "CPUPerc": "80.80%",
+        "Container": "34d37784a45b",
+        "ID": "34d37784a45b",
+        "MemPerc": "0.65%",
+        "MemUsage": "206.6MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-mysql-1",
+        "NetIO": "134MB / 426MB",
+        "PIDs": "38"
+      },
+      {
+        "BlockIO": "150MB / 7.76MB",
+        "CPUPerc": "13.88%",
+        "Container": "b3cda76cc57b",
+        "ID": "b3cda76cc57b",
+        "MemPerc": "0.37%",
+        "MemUsage": "118.2MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-mongo-1",
+        "NetIO": "63kB / 167kB",
+        "PIDs": "33"
+      },
+      {
+        "BlockIO": "14.6MB / 1.64MB",
+        "CPUPerc": "5.33%",
+        "Container": "ea68c2509485",
+        "ID": "ea68c2509485",
+        "MemPerc": "0.02%",
+        "MemUsage": "7.973MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-redis-1",
+        "NetIO": "9.73MB / 44MB",
+        "PIDs": "6"
+      },
+      {
+        "BlockIO": "63.7MB / 803kB",
+        "CPUPerc": "0.30%",
+        "Container": "9c4a819491da",
+        "ID": "9c4a819491da",
+        "MemPerc": "0.53%",
+        "MemUsage": "170.6MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-rabbitmq-1",
+        "NetIO": "403kB / 262kB",
+        "PIDs": "85"
+      }
+    ],
+    "database": {
+      "Innodb_buffer_pool_read_requests": 3163021,
+      "Innodb_buffer_pool_reads": 591,
+      "Innodb_row_lock_time": 0,
+      "Innodb_row_lock_waits": 0,
+      "Questions": 251516,
+      "Slow_queries": 0,
+      "Threads_connected": 10,
+      "Threads_running": 1
+    }
+  },
+  {
+    "utc": "2026-11-09T09:19:59.500385+00:00",
+    "elapsed_seconds": 13.702999999979511,
+    "generator_cpu_percent": 82.3,
+    "generator_rss_mb": 70.875,
+    "host_memory_percent": 48.4,
+    "containers": [
+      {
+        "BlockIO": "0B / 799kB",
+        "CPUPerc": "0.15%",
+        "Container": "74f6b2b933b2",
+        "ID": "74f6b2b933b2",
+        "MemPerc": "2.14%",
+        "MemUsage": "685.3MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-mall-admin-1",
+        "NetIO": "615kB / 221kB",
+        "PIDs": "73"
+      },
+      {
+        "BlockIO": "438kB / 258MB",
+        "CPUPerc": "210.42%",
+        "Container": "ca02e5c8a00f",
+        "ID": "ca02e5c8a00f",
+        "MemPerc": "3.18%",
+        "MemUsage": "1017MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-mall-portal-1",
+        "NetIO": "561MB / 409MB",
+        "PIDs": "103"
+      },
+      {
+        "BlockIO": "4.94MB / 139MB",
+        "CPUPerc": "63.58%",
+        "Container": "34d37784a45b",
+        "ID": "34d37784a45b",
+        "MemPerc": "0.65%",
+        "MemUsage": "206.4MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-mysql-1",
+        "NetIO": "147MB / 467MB",
+        "PIDs": "38"
+      },
+      {
+        "BlockIO": "150MB / 7.79MB",
+        "CPUPerc": "0.32%",
+        "Container": "b3cda76cc57b",
+        "ID": "b3cda76cc57b",
+        "MemPerc": "0.37%",
+        "MemUsage": "118.2MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-mongo-1",
+        "NetIO": "63.3kB / 167kB",
+        "PIDs": "33"
+      },
+      {
+        "BlockIO": "14.6MB / 1.64MB",
+        "CPUPerc": "6.31%",
+        "Container": "ea68c2509485",
+        "ID": "ea68c2509485",
+        "MemPerc": "0.02%",
+        "MemUsage": "7.961MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-redis-1",
+        "NetIO": "10.7MB / 48.5MB",
+        "PIDs": "6"
+      },
+      {
+        "BlockIO": "63.7MB / 803kB",
+        "CPUPerc": "0.40%",
+        "Container": "9c4a819491da",
+        "ID": "9c4a819491da",
+        "MemPerc": "0.53%",
+        "MemUsage": "170.8MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-rabbitmq-1",
+        "NetIO": "403kB / 262kB",
+        "PIDs": "85"
+      }
+    ],
+    "database": {
+      "Innodb_buffer_pool_read_requests": 3461531,
+      "Innodb_buffer_pool_reads": 591,
+      "Innodb_row_lock_time": 0,
+      "Innodb_row_lock_waits": 0,
+      "Questions": 275195,
+      "Slow_queries": 0,
+      "Threads_connected": 10,
+      "Threads_running": 1
+    }
+  },
+  {
+    "utc": "2026-11-09T09:20:11.762770+00:00",
+    "elapsed_seconds": 25.969000000040978,
+    "generator_cpu_percent": 75.7,
+    "generator_rss_mb": 70.87109375,
+    "host_memory_percent": 48.6,
+    "containers": [
+      {
+        "BlockIO": "0B / 799kB",
+        "CPUPerc": "0.24%",
+        "Container": "74f6b2b933b2",
+        "ID": "74f6b2b933b2",
+        "MemPerc": "2.14%",
+        "MemUsage": "685.3MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-mall-admin-1",
+        "NetIO": "615kB / 221kB",
+        "PIDs": "73"
+      },
+      {
+        "BlockIO": "438kB / 258MB",
+        "CPUPerc": "249.83%",
+        "Container": "ca02e5c8a00f",
+        "ID": "ca02e5c8a00f",
+        "MemPerc": "3.18%",
+        "MemUsage": "1017MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-mall-portal-1",
+        "NetIO": "615MB / 448MB",
+        "PIDs": "104"
+      },
+      {
+        "BlockIO": "4.94MB / 139MB",
+        "CPUPerc": "75.03%",
+        "Container": "34d37784a45b",
+        "ID": "34d37784a45b",
+        "MemPerc": "0.65%",
+        "MemUsage": "209.5MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-mysql-1",
+        "NetIO": "161MB / 511MB",
+        "PIDs": "44"
+      },
+      {
+        "BlockIO": "150MB / 7.87MB",
+        "CPUPerc": "0.44%",
+        "Container": "b3cda76cc57b",
+        "ID": "b3cda76cc57b",
+        "MemPerc": "0.37%",
+        "MemUsage": "118.2MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-mongo-1",
+        "NetIO": "63.5kB / 168kB",
+        "PIDs": "33"
+      },
+      {
+        "BlockIO": "14.6MB / 1.64MB",
+        "CPUPerc": "10.77%",
+        "Container": "ea68c2509485",
+        "ID": "ea68c2509485",
+        "MemPerc": "0.03%",
+        "MemUsage": "8.445MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-redis-1",
+        "NetIO": "11.7MB / 53MB",
+        "PIDs": "6"
+      },
+      {
+        "BlockIO": "63.7MB / 803kB",
+        "CPUPerc": "0.58%",
+        "Container": "9c4a819491da",
+        "ID": "9c4a819491da",
+        "MemPerc": "0.53%",
+        "MemUsage": "170.3MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-rabbitmq-1",
+        "NetIO": "403kB / 262kB",
+        "PIDs": "85"
+      }
+    ],
+    "database": {
+      "Innodb_buffer_pool_read_requests": 3782418,
+      "Innodb_buffer_pool_reads": 591,
+      "Innodb_row_lock_time": 0,
+      "Innodb_row_lock_waits": 0,
+      "Questions": 300767,
+      "Slow_queries": 0,
+      "Threads_connected": 10,
+      "Threads_running": 1
+    }
+  },
+  {
+    "utc": "2026-11-09T09:20:24.020523+00:00",
+    "elapsed_seconds": 38.21900000004098,
+    "generator_cpu_percent": 82.0,
+    "generator_rss_mb": 70.84765625,
+    "host_memory_percent": 48.4,
+    "containers": [
+      {
+        "BlockIO": "0B / 799kB",
+        "CPUPerc": "0.21%",
+        "Container": "74f6b2b933b2",
+        "ID": "74f6b2b933b2",
+        "MemPerc": "2.14%",
+        "MemUsage": "685.3MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-mall-admin-1",
+        "NetIO": "615kB / 221kB",
+        "PIDs": "73"
+      },
+      {
+        "BlockIO": "438kB / 258MB",
+        "CPUPerc": "175.76%",
+        "Container": "ca02e5c8a00f",
+        "ID": "ca02e5c8a00f",
+        "MemPerc": "3.18%",
+        "MemUsage": "1018MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-mall-portal-1",
+        "NetIO": "669MB / 487MB",
+        "PIDs": "103"
+      },
+      {
+        "BlockIO": "4.94MB / 139MB",
+        "CPUPerc": "52.83%",
+        "Container": "34d37784a45b",
+        "ID": "34d37784a45b",
+        "MemPerc": "0.65%",
+        "MemUsage": "206.4MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-mysql-1",
+        "NetIO": "175MB / 556MB",
+        "PIDs": "38"
+      },
+      {
+        "BlockIO": "150MB / 7.91MB",
+        "CPUPerc": "8.02%",
+        "Container": "b3cda76cc57b",
+        "ID": "b3cda76cc57b",
+        "MemPerc": "0.37%",
+        "MemUsage": "118.2MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-mongo-1",
+        "NetIO": "63.8kB / 169kB",
+        "PIDs": "33"
+      },
+      {
+        "BlockIO": "14.6MB / 1.64MB",
+        "CPUPerc": "4.18%",
+        "Container": "ea68c2509485",
+        "ID": "ea68c2509485",
+        "MemPerc": "0.03%",
+        "MemUsage": "8.211MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-redis-1",
+        "NetIO": "12.7MB / 57.5MB",
+        "PIDs": "6"
+      },
+      {
+        "BlockIO": "63.7MB / 803kB",
+        "CPUPerc": "0.20%",
+        "Container": "9c4a819491da",
+        "ID": "9c4a819491da",
+        "MemPerc": "0.53%",
+        "MemUsage": "170.3MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-rabbitmq-1",
+        "NetIO": "403kB / 262kB",
+        "PIDs": "85"
+      }
+    ],
+    "database": {
+      "Innodb_buffer_pool_read_requests": 4106844,
+      "Innodb_buffer_pool_reads": 591,
+      "Innodb_row_lock_time": 0,
+      "Innodb_row_lock_waits": 0,
+      "Questions": 326501,
+      "Slow_queries": 0,
+      "Threads_connected": 10,
+      "Threads_running": 1
+    }
+  },
+  {
+    "utc": "2026-11-09T09:20:36.256242+00:00",
+    "elapsed_seconds": 50.45299999997951,
+    "generator_cpu_percent": 72.9,
+    "generator_rss_mb": 70.859375,
+    "host_memory_percent": 48.6,
+    "containers": [
+      {
+        "BlockIO": "0B / 807kB",
+        "CPUPerc": "0.20%",
+        "Container": "74f6b2b933b2",
+        "ID": "74f6b2b933b2",
+        "MemPerc": "2.14%",
+        "MemUsage": "685.3MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-mall-admin-1",
+        "NetIO": "615kB / 221kB",
+        "PIDs": "73"
+      },
+      {
+        "BlockIO": "438kB / 319MB",
+        "CPUPerc": "194.05%",
+        "Container": "ca02e5c8a00f",
+        "ID": "ca02e5c8a00f",
+        "MemPerc": "3.18%",
+        "MemUsage": "1017MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-mall-portal-1",
+        "NetIO": "721MB / 525MB",
+        "PIDs": "103"
+      },
+      {
+        "BlockIO": "4.94MB / 139MB",
+        "CPUPerc": "60.01%",
+        "Container": "34d37784a45b",
+        "ID": "34d37784a45b",
+        "MemPerc": "0.65%",
+        "MemUsage": "206.6MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-mysql-1",
+        "NetIO": "189MB / 600MB",
+        "PIDs": "38"
+      },
+      {
+        "BlockIO": "150MB / 7.97MB",
+        "CPUPerc": "0.38%",
+        "Container": "b3cda76cc57b",
+        "ID": "b3cda76cc57b",
+        "MemPerc": "0.37%",
+        "MemUsage": "118.2MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-mongo-1",
+        "NetIO": "64.3kB / 170kB",
+        "PIDs": "33"
+      },
+      {
+        "BlockIO": "14.6MB / 1.64MB",
+        "CPUPerc": "4.36%",
+        "Container": "ea68c2509485",
+        "ID": "ea68c2509485",
+        "MemPerc": "0.02%",
+        "MemUsage": "7.965MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-redis-1",
+        "NetIO": "13.6MB / 61.9MB",
+        "PIDs": "6"
+      },
+      {
+        "BlockIO": "63.7MB / 803kB",
+        "CPUPerc": "0.38%",
+        "Container": "9c4a819491da",
+        "ID": "9c4a819491da",
+        "MemPerc": "0.53%",
+        "MemUsage": "170.3MiB / 31.24GiB",
+        "Name": "mall-commerce-api-test-rabbitmq-1",
+        "NetIO": "403kB / 262kB",
+        "PIDs": "85"
+      }
+    ],
+    "database": {
+      "Innodb_buffer_pool_read_requests": 4421815,
+      "Innodb_buffer_pool_reads": 591,
+      "Innodb_row_lock_time": 0,
+      "Innodb_row_lock_waits": 0,
+      "Questions": 351549,
+      "Slow_queries": 0,
+      "Threads_connected": 10,
+      "Threads_running": 1
+    }
+  }
+]
