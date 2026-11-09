@@ -38,6 +38,9 @@ class CartApi:
         assert_api_success(body)
         return body["data"]
 
+    def update_attr_raw(self, cart_item: dict) -> dict:
+        return self.client.post("/cart/update/attr", json=cart_item)
+
     def delete_raw(self, cart_ids: list[int]) -> dict:
         return self.client.post(
             "/cart/delete",
