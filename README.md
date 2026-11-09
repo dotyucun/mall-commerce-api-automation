@@ -28,7 +28,7 @@
 - 异步取消：超时订单自动关闭及锁定库存释放。
 - 读取负载实验：商品搜索、商品详情、购物车读取，校验 HTTP 与业务响应，区分轻量基线和阶梯实验。
 
-完整回归共 31 个测试实例，具体场景见[测试矩阵](docs/test-matrix.md)，风险与断言设计见[测试策略](docs/test-strategy.md)。
+完整回归共 35 个测试实例，具体场景见[测试矩阵](docs/test-matrix.md)，风险与断言设计见[测试策略](docs/test-strategy.md)。
 
 ## 缺陷案例：订单关闭后仍占用库存
 
@@ -40,21 +40,24 @@
 
 ## 验证结果
 
-以下统计来自 2026-10-09 的本地实测，执行环境与原始结果见[实测结果](docs/results.md)。
+以下功能回归统计来自 2026-11-09 的本地实测，使用固定上游提交的干净构建；性能基线单独标注历史日期。执行环境与结果见[实测结果](docs/results.md)。
 
 | 项目 | 结果 |
 | --- | --- |
 | 被测版本 | `macrozheng/mall@0504e86b1f1b6f1b8aa6a734d37a90fb67346be7` |
-| 普通回归 | 默认与逆序各运行一次，均为 `21 passed, 9 xfailed, 1 deselected` |
-| 完整回归 | `22 passed, 9 xfailed`，包含真实 RabbitMQ 超时取消 |
-| RabbitMQ 慢用例 | 单独运行 `1 passed, 30 deselected`，约 61 秒 |
-| 框架自测 | Windows 下 `35 passed`，覆盖运行脚本、响应脱敏、数据写入边界、性能业务断言及 xfail 行为 |
-| Locust 基线 | 20 用户、2 用户/秒、2 分钟；2190 请求、0 失败、聚合 P95 14ms |
+| 普通回归 | 默认顺序连续两轮、逆序一轮，均为 `21 passed, 13 xfailed, 1 deselected` |
+| 完整回归 | `22 passed, 13 xfailed`，包含真实 RabbitMQ 超时取消，耗时 157.94 秒 |
+| 框架自测 | Windows 下共 70 个自测，覆盖运行脚本、脱敏、数据写入边界、业务断言、xfail、阶梯窗口记账及证据审计；Linux CI 为 65 个 |
+| Locust 历史基线（2026-10-09） | 20 用户、2 用户/秒、2 分钟；2190 请求、0 失败、聚合 P95 14ms；本次未重跑 |
 | 静态检查 | Ruff check 与 format check 通过 |
 
-9 个预期失败实例对应 6 类已确认的被测系统缺陷。缺陷列表见[已知缺陷](docs/known-issues.md)，环境、统计和报告截图见[实测结果](docs/results.md)。各次云端执行以对应提交的 [Actions 记录](https://github.com/dotyucun/mall-commerce-api-automation/actions)为准。
+13 个预期失败实例对应 8 类已确认的被测系统缺陷，其中新增购物车规格越权、非正数量相关的 4 个实例。缺陷列表见[已知缺陷](docs/known-issues.md)，环境、统计和报告截图见[实测结果](docs/results.md)。各次云端执行以对应提交的 [Actions 记录](https://github.com/dotyucun/mall-commerce-api-automation/actions)为准。
 
-### 2026-10-16 阶梯读取实验
+### 2026-11-09 阶梯读取验证
+
+阶梯工具与业务回归共用本项目的配置、专用账号和 Compose 环境，通过统一脚本运行，负载执行期间不同时运行功能回归。默认 10/20/40/80 用户各测量 60 秒，本次共 74261 个稳态请求、0 失败；80 用户档成功 RPS 656.78、P95 27ms。窗口后的 21 个尾部请求单独记账，无失败和未完成请求；原始摘要、资源采样与源码指纹核算通过。详见[复核记录](docs/performance-review-20261109.md)。这是一轮固定热点读取验证，不代表服务端容量上限。
+
+### 历史阶梯读取实验（2026-10-16）
 
 将用户等待时间固定为 0.1 秒，每档预热 30 秒、稳态测量 60 秒；登录与预热不进入稳态统计。任务为搜索/详情/购物车读取，权重 3:2:1，使用单专用会员与固定热点商品，不模拟真实生产比例。
 
@@ -148,13 +151,15 @@ python -m pytest -m "known_issue"
 
 ## 报告证据
 
+以下截图保留自 2026-10-09，展示当时的 31 个实例，不代表本次新增用例后的 35 个实例。当前统计以上述实测结果和对应提交的 Actions 产物为准。
+
 ![Allure Overview](docs/images/allure-overview-20261009.jpg)
 
 ![Allure Behaviors](docs/images/allure-behaviors-20261009.jpg)
 
 完整执行环境、限制与原始统计见[实测结果](docs/results.md)。GitHub Actions 上传完整运行产物；`reports/`、缓存、JAR 和日志不入库。经审阅的小型性能证据副本保存在 `docs/evidence/`，用于长期核对 README 中的数字。
 
-Allure 将 XFAIL 显示为灰色 `skipped`；截图中 9 条对应已经执行并关联 Issue 的缺陷用例。环境、数据恢复和交付检查见[核验记录](docs/final-audit.md)。
+Allure 将 XFAIL 显示为灰色 `skipped`；历史截图中的 9 条对应当时已经执行并关联 Issue 的缺陷用例，当前为 13 条。环境、数据恢复和交付检查见[核验记录](docs/final-audit.md)。
 
 ## CI
 
