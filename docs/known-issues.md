@@ -10,8 +10,10 @@
 | [GH-4](https://github.com/dotyucun/mall-commerce-api-automation/issues/4) | 退货申请缺少订单所有权和订单完成状态校验 | 越权或非法状态退货 | 两个退货 negative 场景 |
 | [GH-5](https://github.com/dotyucun/mall-commerce-api-automation/issues/5) | 商品下架后，旧购物车记录仍可生成订单 | 不可售商品继续成交 | `test_unpublished_product_cannot_be_ordered_from_stale_cart` |
 | [GH-7](https://github.com/dotyucun/mall-commerce-api-automation/issues/7) | 后台关闭待付款订单没有释放锁定库存 | 已关闭订单继续占用可售库存 | `test_admin_close_cancels_unpaid_order_and_records_history` |
+| [GH-11](https://github.com/dotyucun/mall-commerce-api-automation/issues/11) | 修改购物车规格接口 `/cart/update/attr` 按主键删除原记录，缺少会员所有权校验 | 任意会员可删除他人购物车商品 | `test_user_cannot_replace_another_users_cart_item_attributes` |
+| [GH-12](https://github.com/dotyucun/mall-commerce-api-automation/issues/12) | 加购和修改数量不校验数量为正，负数量可生成负金额订单并使 `lock_stock` 变为负数 | 金额与库存资产错误 | `test_cart_rejects_non_positive_quantity`、`test_negative_cart_quantity_cannot_produce_order` |
 
-共 6 类缺陷、9 个测试实例。GH-7 在补充库存一致性断言时暴露，复现细节见[后台关闭库存缺陷](issue-6-admin-close-stock.md)。Issue 编号不是缺陷数量，仓库中的 PR 也占用同一编号序列。
+共 8 类缺陷、13 个测试实例。GH-11、GH-12 于 2026-11-02 补充购物车越权与数量边界测试时发现，2026-11-09 重新验证，见[购物车缺陷复现与证据边界](cart-defects.md)。GH-7 在补充库存一致性断言时暴露，复现细节见[后台关闭库存缺陷](issue-6-admin-close-stock.md)。Issue 编号不是缺陷数量，仓库中的 PR 也占用同一编号序列。
 
 ## 管理方式
 
@@ -24,4 +26,4 @@
 
 本项目将被测服务限制在本机隔离环境，以专用账号和数据复现问题。暂停有缺陷的操作可降低演示风险，但隐藏按钮、刷新页面或测试后恢复数据均不代表后端安全或正确。
 
-真正修复需要被测系统修改：订单和退货接口检查当前用户与合法状态；支付使用受信来源及事务内幂等保护；下单重新校验可售状态；发货历史只记录成功操作；后台关闭事务性释放库存。修复后运行现有负向用例及相邻正常流程验证，而不是删除测试。本仓库固定上游版本，不把这些修复建议当作已完成代码。
+真正修复需要被测系统修改：订单和退货接口检查当前用户与合法状态；支付使用受信来源及事务内幂等保护；下单重新校验可售状态；发货历史只记录成功操作；后台关闭事务性释放库存；购物车写操作统一按当前会员过滤并校验数量为正。修复后运行现有负向用例及相邻正常流程验证，而不是删除测试。本仓库固定上游版本，不把这些修复建议当作已完成代码。

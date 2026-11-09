@@ -1,16 +1,16 @@
 # 项目核验记录
 
-本页汇总 `mall-commerce-api-automation` 在 2026-10-09 的核验项与证据。核验日期与执行结果对应，文档更新时间不代表重新完成实验。
+本页汇总 `mall-commerce-api-automation` 在 2026-11-09 的功能回归核验项与证据。Locust 和报告截图保留历史日期，文档更新时间不代表重新完成性能实验。
 
 ## 范围与证据
 
 | 核验项 | 证据位置 |
 | --- | --- |
-| 固定被测源码，无源码复制或后端修改 | `src/mall_api_test/config/default.yaml`、`scripts/mall-test.ps1`、`.gitignore` |
+| 固定被测源码，不提交上游源码；本轮使用干净构建 | `src/mall_api_test/config/default.yaml`、`scripts/mall-test.ps1`、`.gitignore`、`docs/results.md` |
 | 六层职责与统一代码风格 | `docs/architecture.md`、Ruff check/format、`.gitattributes` |
-| 31 个业务实例及场景边界 | `docs/test-matrix.md`、pytest 收集 |
-| 6 类缺陷对应 9 个严格预期失败 | `docs/known-issues.md`、GitHub Issues #1-5、#7 |
-| 默认与逆序回归一致 | `docs/results.md`、`qa/reverse_order_plugin.py` |
+| 35 个业务实例及场景边界 | `docs/test-matrix.md`、pytest 收集 |
+| 8 类缺陷对应 13 个严格预期失败 | `docs/known-issues.md`、GitHub Issues #1-5、#7、#11、#12 |
+| 默认两轮与逆序一轮回归一致 | `docs/results.md`、`qa/reverse_order_plugin.py` |
 | HTTP 与业务错误均保留失败信号 | `qa/test_http_client.py`、`qa/test_known_defects.py` |
 | 本地命令失败不会假绿 | `qa/test_runner.py`，覆盖 PowerShell 5.1/7 |
 | 凭据来自环境，账号 BCrypt 初始化 | `.env.example`、`scripts/prepare_test_data.py`、`qa/test_data_manager.py` |
@@ -23,7 +23,9 @@
 
 ## 结果解读
 
-业务回归包含 31 个实例，其中 22 个通过、9 个预期失败。预期失败对应 6 类尚未修复的被测系统缺陷，详细说明见[已知缺陷](known-issues.md)。框架自测验证测试工具自身，可以使用 Mock 隔离依赖；业务回归、MQ 和性能任务连接真实 mall 服务。
+业务回归包含 35 个实例，其中 22 个通过、13 个预期失败。预期失败对应 8 类尚未修复的被测系统缺陷，详细说明见[已知缺陷](known-issues.md)。框架自测验证测试工具自身，可以使用 Mock 隔离依赖；业务回归、MQ 和性能任务连接真实 mall 服务。
+
+本轮保留原有本地 SUT 的未提交修改，最终证据来自另建的干净固定版本。串行回归之后，专用购物车、订单、退货和延迟消息均为 0，SKU 库存恢复为 `stock=500`、`lock_stock=0`，超时设置恢复为 120 分钟。默认与逆序一致不等于并行安全，数据重置可能隔离掉共享状态污染，不能夸大该检查的证明力。
 
 本项目的成果是测试工程、缺陷复现和验证证据。被测商城来自开源项目，支付场景使用内部订单状态接口。当前适用环境、已覆盖功能和待扩展范围集中说明在 [README](../README.md#项目范围)。
 

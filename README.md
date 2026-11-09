@@ -28,7 +28,7 @@
 - 异步取消：超时订单自动关闭及锁定库存释放。
 - 性能基线：商品搜索、商品详情、购物车读取，以及 HTTP 和业务响应校验。
 
-完整回归共 31 个测试实例，具体场景见[测试矩阵](docs/test-matrix.md)，风险与断言设计见[测试策略](docs/test-strategy.md)。
+完整回归共 35 个测试实例，具体场景见[测试矩阵](docs/test-matrix.md)，风险与断言设计见[测试策略](docs/test-strategy.md)。
 
 ## 缺陷案例：订单关闭后仍占用库存
 
@@ -40,19 +40,18 @@
 
 ## 验证结果
 
-以下统计来自 2026-10-09 的本地实测，执行环境与原始结果见[实测结果](docs/results.md)。
+以下功能回归统计来自 2026-11-09 的本地实测，使用固定上游提交的干净构建；性能基线单独标注历史日期。执行环境与结果见[实测结果](docs/results.md)。
 
 | 项目 | 结果 |
 | --- | --- |
 | 被测版本 | `macrozheng/mall@0504e86b1f1b6f1b8aa6a734d37a90fb67346be7` |
-| 普通回归 | 默认与逆序各运行一次，均为 `21 passed, 9 xfailed, 1 deselected` |
-| 完整回归 | `22 passed, 9 xfailed`，包含真实 RabbitMQ 超时取消 |
-| RabbitMQ 慢用例 | 单独运行 `1 passed, 30 deselected`，约 61 秒 |
+| 普通回归 | 默认顺序连续两轮、逆序一轮，均为 `21 passed, 13 xfailed, 1 deselected` |
+| 完整回归 | `22 passed, 13 xfailed`，包含真实 RabbitMQ 超时取消，耗时 157.94 秒 |
 | 框架自测 | Windows 下 `35 passed`，覆盖运行脚本、响应脱敏、数据写入边界、性能业务断言及 xfail 行为 |
-| Locust 基线 | 20 用户、2 用户/秒、2 分钟；2190 请求、0 失败、聚合 P95 14ms |
+| Locust 历史基线（2026-10-09） | 20 用户、2 用户/秒、2 分钟；2190 请求、0 失败、聚合 P95 14ms；本次未重跑 |
 | 静态检查 | Ruff check 与 format check 通过 |
 
-9 个预期失败实例对应 6 类已确认的被测系统缺陷。缺陷列表见[已知缺陷](docs/known-issues.md)，环境、统计和报告截图见[实测结果](docs/results.md)。各次云端执行以对应提交的 [Actions 记录](https://github.com/dotyucun/mall-commerce-api-automation/actions)为准。
+13 个预期失败实例对应 8 类已确认的被测系统缺陷，其中新增购物车规格越权、非正数量相关的 4 个实例。缺陷列表见[已知缺陷](docs/known-issues.md)，环境、统计和报告截图见[实测结果](docs/results.md)。各次云端执行以对应提交的 [Actions 记录](https://github.com/dotyucun/mall-commerce-api-automation/actions)为准。
 
 ## 项目范围
 
@@ -131,13 +130,15 @@ python -m pytest -m "known_issue"
 
 ## 报告证据
 
+以下截图保留自 2026-10-09，展示当时的 31 个实例，不代表本次新增用例后的 35 个实例。当前统计以上述实测结果和对应提交的 Actions 产物为准。
+
 ![Allure Overview](docs/images/allure-overview-20261009.jpg)
 
 ![Allure Behaviors](docs/images/allure-behaviors-20261009.jpg)
 
 完整执行环境、限制与原始统计见[实测结果](docs/results.md)。GitHub Actions 会上传 Allure 原始结果、HTML、容器日志和 Locust HTML/CSV，不把生成物提交进源码仓库。
 
-Allure 将 XFAIL 显示为灰色 `skipped`；截图中 9 条对应已经执行并关联 Issue 的缺陷用例。环境、数据恢复和交付检查见[核验记录](docs/final-audit.md)。
+Allure 将 XFAIL 显示为灰色 `skipped`；历史截图中的 9 条对应当时已经执行并关联 Issue 的缺陷用例，当前为 13 条。环境、数据恢复和交付检查见[核验记录](docs/final-audit.md)。
 
 ## CI
 
